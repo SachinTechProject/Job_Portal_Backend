@@ -10,10 +10,11 @@ const jobScehama = new mongoose.Schema({
         required: true,
     },
     requirements: [{
-        type: String
+        type: String,
+        required: true
     }],
     salary:{
-        type: Number,
+        type: String,
         required: true, 
     },
     location:{

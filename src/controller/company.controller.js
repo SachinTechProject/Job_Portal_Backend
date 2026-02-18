@@ -54,7 +54,7 @@ const updateCompanyDetails = async (req, res)=>{
         let company = await Company.findOneAndUpdate( 
             {_id: id ,userId : req.user._id},
             {
-                name :companyName ,
+                name :companyName , 
                 website,
                 description, 
                 location, 

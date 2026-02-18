@@ -58,7 +58,7 @@ const login = async (req,res)=>{
             return res.status(402).json({message:"Invalid Email or Password"})
         }
 
-        const isPasswordCorrect = user.isPasswordCorrect(password)
+        const isPasswordCorrect = await user.isPasswordCorrect(password)
         
         if(!isPasswordCorrect){
             return res.status(402).json({message:"Invalid Password or Email"})
