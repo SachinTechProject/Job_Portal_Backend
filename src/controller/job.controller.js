@@ -99,21 +99,27 @@ const deleteJob = async (req, res)=>{
 
 }
 
-const getAllJobs = async (req, res)=>{
-
+const getAllJobs = async (req, res) => {
     try {
-        
         const jobs = await Job.find()
+            .populate({
+                path: "company",
+                select: "name website location logo"
+            })
+            .populate({
+                path: "createdBy",
+                select: "fullName email"
+            })
 
-        if(!jobs){
-            return res.status(400).json({message:"Some thing went wrong !!"})
+        if (!jobs || jobs.length === 0) {
+            return res.status(200).json({ message: "No jobs found", jobs: [], success: true })
         }
 
-        return res.status(201).json({message:"All Jobs", jobs})
+        return res.status(200).json({ message: "All Jobs", jobs, success: true })
 
     } catch (error) {
         console.log("Server error", error)
-        return res.status(500).json({message:"Server error", error})
+        return res.status(500).json({ message: "Server error", error, success: false })
     }
 }
 

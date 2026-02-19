@@ -4,10 +4,12 @@ import { createJob, deleteJob, getAllJobs, updateJob } from "../controller/job.c
 
 const router = Router()
 
+// Public - anyone can view all jobs (no auth required)
+router.route("/getAllJobs").get(getAllJobs)
 
+// Authenticated routes - recruiter/admin only
 router.route("/createjob").post(verifyJwt, createJob)
 router.route("/updatejob/:id").put(verifyJwt, updateJob)
 router.route("/deletejob/:id").delete(verifyJwt, deleteJob)
-router.route("/getAllJobs").get(verifyJwt, getAllJobs)
 
 export default router
