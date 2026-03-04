@@ -8,7 +8,7 @@ router.route("/register-company").post(verifyJwt, registerCompany)
 router.route("/get-companys").get(verifyJwt, getRegisterCompany)
 router.route("/updates/companys-details/:id").put(verifyJwt, updateCompanyDetails)
 router.route("/delete-company/:id").delete(verifyJwt, deleteCompany)
-router.route("/view/:companyId").get(getCompanyWithApplications)
+router.route("/view/:companyId").get(verifyJwt,getCompanyWithApplications)
 
 
 export default router

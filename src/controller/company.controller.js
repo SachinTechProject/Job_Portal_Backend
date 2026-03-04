@@ -36,7 +36,7 @@ const registerCompany = async (req, res) =>{
 const getRegisterCompany = async (req,res) =>{
     try {
 
-       const allcompany = await Company.find({userId :req.user._id}) 
+       const allcompany = await Company.find() 
 
        return res.status(200).json({message:"get all company name", allcompany, success:true})
 

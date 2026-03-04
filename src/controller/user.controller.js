@@ -123,6 +123,18 @@ const logout = async(req,res)=>{
 
 }
 
+const getUserProfile = async(req, res)=>{
+
+    try {
+        const id = req.user._id
+        const user = await User.findById(id).select("-password");
+        res.status(201).json({message:"Current User", user})
+    } catch (error) {
+        console.log("Server error", error)
+        res.status(500).json({message:"Server error", error})
+    }
+}
+
 const updateProfile = async(req,res)=>{
 
     try {
@@ -181,4 +193,4 @@ const updateProfile = async(req,res)=>{
 
 
 
-export { register , login , updateProfile, logout} 
+export { register , login , updateProfile, logout, getUserProfile} 

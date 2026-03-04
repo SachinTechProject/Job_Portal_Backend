@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
     refreshToken:{
         type:String
     },
+    googleId: { type: String },
+    avatar: { type: String },
+    isGoogleUser: { type: Boolean, default: false },
+  
     profile:{
         bio:{type:String, default:""},
         skills:{type:[String], default:[]},
