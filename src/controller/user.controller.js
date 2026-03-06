@@ -1,4 +1,5 @@
 import { User } from "../models/user.models.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 
 const register =  async(req, res)=>{
@@ -139,15 +140,12 @@ const updateProfile = async(req,res)=>{
 
     try {
         const {fullName, email, phoneNumber, bio, skills} = req.body
-        const file = req.file
-        // if(!fullName || !email || !phoneNumber || !bio || !skills){
-        //     return res.status(400).json({message:"Something is missing!", success: false})
-        // }
+        const profileimage = req.files?.profilePicture?.[0]
+        const resume = req.files?.resume?.[0]
 
         let skillsArray
         if(skills){
-
-         skillsArray = skills.split(",")
+            skillsArray = skills.split(",")
         }
 
         const userId = req.user._id
@@ -157,19 +155,25 @@ const updateProfile = async(req,res)=>{
             return res.status(400).json({message:"User not found", success: false})
         }
 
+        // uploading profile picture to cloudinary
+        if(profileimage){
+            const cloudimg = await uploadOnCloudinary(profileimage.path)
+            if(!cloudimg){
+                return res.status(500).json({message:"Failed to upload profile picture", success: false})
+            }
+            user.profile.profilePicture = cloudimg.secure_url
+        }
+
         // updating the data
+        if(fullName) user.fullName = fullName
+        if(email) user.email = email
+        if(phoneNumber) user.phoneNumber = phoneNumber
+        if(bio) user.profile.bio = bio
+        if(skills) user.profile.skills = skillsArray
 
-       
-       if(fullName) user.fullName = fullName
-       if(email )user.email = email
-       if(phoneNumber) user.phoneNumber = phoneNumber
-       if(bio) user.profile.bio = bio
-       if(skills) user.profile.skills = skillsArray
-
-     
         await user.save()
 
-           user = {
+        user = {
             _id : user._id,
             fullName: user.fullName,
             email:user.email,
@@ -187,7 +191,7 @@ const updateProfile = async(req,res)=>{
 
     } catch (error) {
         console.log("server error", error)
-        return res.status(500).json({message:"Sever error", error})
+        return res.status(500).json({message:"Server error", error})
     }
 }
 
