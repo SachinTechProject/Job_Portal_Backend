@@ -21,12 +21,18 @@ import companyRouter from "./routes/company.routes.js"
 import jobRouter from "./routes/job.routes.js"
 import searchRouter from "./routes/search.routes.js"
 import applicationRouter from "./routes/application.routes.js"
+import experienceRouter from "./routes/experience.routes.js"
+import educationRouter from "./routes/education.routes.js"
+import resumeRouter from "./routes/resume.routes.js"
 
 app.use("/api/users", userRouter)
 app.use("/api/company", companyRouter)
 app.use("/api/jobs", jobRouter)
 app.use("/api/jobsearch", searchRouter)
 app.use("/api/applications", applicationRouter)
+app.use("/api/experience", experienceRouter)
+app.use("/api/education", educationRouter)
+app.use("/api/resume", resumeRouter)
 
 
 export { app };

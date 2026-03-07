@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const exprienceSchema = new mongoose.Schema({
+const experienceSchema = new mongoose.Schema({
     jobTitle:{
         type:String,
         // required: true
@@ -21,7 +21,11 @@ const exprienceSchema = new mongoose.Schema({
     },
     description: {
         type: String
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     }
 },{timestamps:true})
 
-export const Exprience = mongoose.model("Exprience", exprienceSchema)
+export const Experience = mongoose.model("Experience", experienceSchema)

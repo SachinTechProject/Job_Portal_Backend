@@ -1,4 +1,4 @@
-import { Resume } from "../models/resume.model"
+import { Resume } from "../models/resume.model.js"
 
 
 
@@ -27,7 +27,7 @@ const createResume = async (req, res)=>{
         const userId = req.user._id
         let skillsArray
         if(skills){
-           skillsArray = skills.split(",").map(skill => skill.trim())
+           skillsArray = typeof skills === 'string' ? skills.split(",").map(skill => skill.trim()) : skills
         }
     
         const newResume = await Resume.create({
@@ -102,7 +102,7 @@ const updateResume = async (req,res)=>{
   
        let skillsArray
     if(skills){
-      skillsArray = skills.split(",").map(skill => skill.trim())
+      skillsArray = typeof skills === 'string' ? skills.split(",").map(skill => skill.trim()) : skills
     }
 
       const update = await Resume.findOneAndUpdate(
@@ -141,4 +141,4 @@ const updateResume = async (req,res)=>{
 }
 
 
-export { createResume, getResume, updateResume, }
+export { createResume, getResume, updateResume }

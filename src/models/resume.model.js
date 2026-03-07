@@ -29,7 +29,11 @@ const resumeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Education" 
     }],
-    skills:[{ type: Sting }],
+    experience:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Experience"
+    }],
+    skills:[{ type: String }],
     certifications: [{ type: String }],
     preferredJobType: {
       type: String,

@@ -14,10 +14,16 @@ const educationSchema = new mongoose.Schema({
         required: true 
     },
     year:{
-        type: Number
+        type: Number,
+        min:1950,
+        max: new Date().getFullYear()
     },
     gap:{
         type:String
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }
 },{timestamps:true})
 
