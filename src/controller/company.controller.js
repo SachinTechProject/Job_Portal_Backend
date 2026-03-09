@@ -7,25 +7,31 @@ import mongoose from "mongoose"
 const registerCompany = async (req, res) =>{
   
     try {
-        const {companyName,website,location} = req.body
-        if(!companyName || !website || !location){
-          return res.status(400)/json({message:"Company name is required", success:flase})
+        if(!req.body || Object.keys(req.body).length === 0){
+            return res.status(400).json({message:"Request body is required", success:false})
+        }
+        
+        const {name,website,location,industry,companySize,foundedYear,applications,totalJobsPosted,totalApplicationsReceived} = req.body
+        if(!name || !website || !location){
+          return res.status(400).json({message:"Company name is required", success:false})
         
         } 
 
-        let company = await Company.findOne({name: companyName})
+        let company = await Company.findOne({name})
 
         if(company){
-            return res.status(400).json({message:"Company name is allray exist", success :false})
+            return res.status(400).json({message:"Company name already exist", success :false})
         }
  
         company = await Company.create({
-            name:companyName,
+            name,
             userId: req.user._id,
-            website,location
+            website,location,
+            industry,companySize,foundedYear,totalJobsPosted,totalApplicationsReceived,applications
+
         })
 
-        return res.status(200).json({message:"company registered successfully",company, success:true})
+        return res.status(201).json({message:"company registered successfully",company, success:true})
 
     } catch (error) {
         console.log("server error", error)
@@ -116,7 +122,7 @@ const getCompanyWithApplications = async (req, res) => {
 
         // Get breakdown by job
         const applicationsByJob = await Application.aggregate([
-            { $match: { job: { $in: jobIds.map(id => mongoose.Types.ObjectId(id)) } } },
+            { $match: { job: { $in: jobIds } } },
             { 
                 $lookup: {
                     from: "jobs",
