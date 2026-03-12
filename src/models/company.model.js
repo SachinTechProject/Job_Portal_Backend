@@ -23,9 +23,9 @@ const companySchema = new mongoose.Schema({
         required: true
     },
 
-    logo: {
-        type: String
-    },
+    // logo: {
+    //     type: String
+    // },
 
     industry: {
         type: String

@@ -7,26 +7,32 @@ import mongoose from "mongoose"
 const registerCompany = async (req, res) =>{
   
     try {
-        if(!req.body || Object.keys(req.body).length === 0){
-            return res.status(400).json({message:"Request body is required", success:false})
-        }
         
-        const {name,website,location,industry,companySize,foundedYear,applications,totalJobsPosted,totalApplicationsReceived} = req.body
+        const {name,description,website,location,industry,companySize,foundedYear,applications,totalJobsPosted,totalApplicationsReceived} = req.body
         if(!name || !website || !location){
           return res.status(400).json({message:"Company name is required", success:false})
         
         } 
 
-        let company = await Company.findOne({name})
+  // Check if admin already has 3 companies
+    const adminCompanyCount = await Company.countDocuments({ userId: req.user._id });
+    if (adminCompanyCount >= 3) {
+      return res.status(400).json({
+        message: "Admin can only add up to 3 companies",
+        success: false,
+      });
+    }
 
-        if(company){
-            return res.status(400).json({message:"Company name already exist", success :false})
-        }
+    // Check if company name already exists
+    const existingCompany = await Company.findOne({ name });
+    if (existingCompany) {
+      return res.status(400).json({ message: "Company name already exists", success: false });
+    }
  
-        company = await Company.create({
+      const company = await Company.create({
             name,
             userId: req.user._id,
-            website,location,
+            website,location,description,
             industry,companySize,foundedYear,totalJobsPosted,totalApplicationsReceived,applications
 
         })
@@ -52,10 +58,23 @@ const getRegisterCompany = async (req,res) =>{
     }
 }
 
+const getAdminCompany = async (req, res)=>{
+    try {
+const id = req.user._id
+       const allcompany = await Company.find({userId: id}) 
+
+       return res.status(200).json({message:"get all company name", allcompany, success:true})
+
+    } catch (error) {
+        console.log("Server error", error)
+        return res.status(500).json({message:"Server error", error})
+    }
+}
+
 
 const updateCompanyDetails = async (req, res)=>{
     try {
-        const {companyName,website,location, logo, description} = req.body
+        const {companyName,website,location, description} = req.body
     
        
         const {id} = req.params
@@ -67,7 +86,7 @@ const updateCompanyDetails = async (req, res)=>{
                 website,
                 description, 
                 location, 
-                logo 
+                
             },
             {new: true}
         )
@@ -82,25 +101,30 @@ const updateCompanyDetails = async (req, res)=>{
    
 }
 
-const deleteCompany = async (req,res)=>{
+const deleteCompany = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-    try {
-        const {id} = req.params
-    
-        const company = await Company.findOneAndDelete({_id: id, userId: req.user._id})
-    
-        if(!company){
-            return res.status(400).json({message:"Company not found !!"})
-        }
-    
-        return res.status(200).json({message:"Company details delete"})
-    
-    } catch (error) {
-        console.log("Server error", error)
-        return res.status(500).json("Server error", error)
+    // Attempt to find and delete the company only if this admin added it
+    const company = await Company.findOneAndDelete({ _id: id, userId: req.user._id });
+
+    if (!company) {
+      // Could not delete because company doesn't exist or user is not the owner
+      return res.status(403).json({
+        message: "You are not allowed to delete this company or it does not exist",
+        success: false,
+      });
     }
-}
 
+    return res.status(200).json({
+      message: "Company deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Server error", error);
+    return res.status(500).json({ message: "Server error", error, success: false });
+  }
+};
 const getCompanyWithApplications = async (req, res) => {
     try {
         const { companyId } = req.params;
@@ -156,6 +180,16 @@ const getCompanyWithApplications = async (req, res) => {
     }
 };
 
+const getSingleCompany = async (req, res) => {
+  try {
+    const company = await Company.findById(req.params.id);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found", success: false });
+    }
+    return res.status(200).json({ company, success: true });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", success: false });
+  }
+};
 
-
-export { registerCompany, getRegisterCompany, updateCompanyDetails, deleteCompany, getCompanyWithApplications}
+export { registerCompany, getRegisterCompany,getAdminCompany, updateCompanyDetails, getSingleCompany, deleteCompany, getCompanyWithApplications}

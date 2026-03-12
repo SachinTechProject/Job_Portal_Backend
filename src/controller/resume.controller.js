@@ -67,7 +67,7 @@ const getResume = async (req, res) => {
 
       if(!resume){
       return res.status(404).json({
-        message:"Resume not found"
+        message:"Resume not Created, pleace create the resume"
       })
     }
     res.status(200).json({message:"All resume details", resume})
