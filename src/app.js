@@ -24,6 +24,7 @@ import applicationRouter from "./routes/application.routes.js"
 import experienceRouter from "./routes/experience.routes.js"
 import educationRouter from "./routes/education.routes.js"
 import resumeRouter from "./routes/resume.routes.js"
+import chatRouter from "./routes/chatRoutes.js"
 
 app.use("/api/users", userRouter)
 app.use("/api/company", companyRouter)
@@ -33,6 +34,6 @@ app.use("/api/applications", applicationRouter)
 app.use("/api/experience", experienceRouter)
 app.use("/api/education", educationRouter)
 app.use("/api/resume", resumeRouter)
-
+app.use("/api/chats", chatRouter)
 
 export { app };

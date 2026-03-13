@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteCompany, getRegisterCompany,getAdminCompany, registerCompany, updateCompanyDetails, getCompanyWithApplications, getSingleCompany } from "../controller/company.controller.js";
+import { deleteCompany,toggleLikeCompany,toggleFollowCompany, getRegisterCompany,getAdminCompany, registerCompany, updateCompanyDetails, getCompanyWithApplications, getSingleCompany } from "../controller/company.controller.js";
 import verifyJwt from "../middleware/authJwt.middleware.js";
 
 const router = Router()
@@ -11,6 +11,7 @@ router.route("/delete-company/:id").delete(verifyJwt, deleteCompany)
 router.route("/view/:companyId").get(verifyJwt,getCompanyWithApplications)
 router.route("/get-companys/:id").get(verifyJwt, getSingleCompany)
 router.route("/getadmincompany").get(verifyJwt, getAdminCompany)
-
+router.route("/companies/:id/like").post(verifyJwt,toggleLikeCompany)
+router.route("/companies/:id/follow").post(verifyJwt, toggleFollowCompany)
 
 export default router

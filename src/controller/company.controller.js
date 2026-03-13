@@ -180,16 +180,136 @@ const getCompanyWithApplications = async (req, res) => {
     }
 };
 
+// const getSingleCompany = async (req, res) => {
+//   try {
+//     const company = await Company.findById(req.params.id);
+//     if (!company) {
+//       return res.status(404).json({ message: "Company not found", success: false });
+//     }
+//     return res.status(200).json({ company, success: true });
+//   } catch (error) {
+//     return res.status(500).json({ message: "Server error", success: false });
+//   }
+// };
+
 const getSingleCompany = async (req, res) => {
   try {
-    const company = await Company.findById(req.params.id);
+
+    const company = await Company.findById(req.params.id)
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found", success: false })
+    }
+
+    const userId = req.user?._id
+
+    const isLiked = company.likes.includes(userId)
+    const isFollowing = company.followers.includes(userId)
+
+    return res.status(200).json({
+      company,
+      isLiked,
+      isFollowing,
+      success: true
+    })
+
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", success: false })
+  }
+}
+
+const toggleLikeCompany = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const company = await Company.findById(id);
+
     if (!company) {
       return res.status(404).json({ message: "Company not found", success: false });
     }
-    return res.status(200).json({ company, success: true });
+
+    const alreadyLiked = company.likes.includes(userId);
+
+    let updatedCompany;
+
+    if (alreadyLiked) {
+      updatedCompany = await Company.findByIdAndUpdate(
+        id,
+        {
+          $pull: { likes: userId },
+          $inc: { totalLikes: -1 }
+        },
+        { new: true }
+      );
+    } else {
+      updatedCompany = await Company.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: { likes: userId },
+          $inc: { totalLikes: 1 }
+        },
+        { new: true }
+      );
+    }
+
+    return res.status(200).json({
+      message: alreadyLiked ? "Company unliked" : "Company liked",
+      totalLikes: updatedCompany.totalLikes,
+      success: true
+    });
+
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Server error", success: false });
   }
 };
 
-export { registerCompany, getRegisterCompany,getAdminCompany, updateCompanyDetails, getSingleCompany, deleteCompany, getCompanyWithApplications}
+const toggleFollowCompany = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const company = await Company.findById(id);
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found", success: false });
+    }
+
+    const alreadyFollowing = company.followers.includes(userId);
+
+    let updatedCompany;
+
+    if (alreadyFollowing) {
+      updatedCompany = await Company.findByIdAndUpdate(
+        id,
+        {
+          $pull: { followers: userId },
+          $inc: { totalFollowers: -1 }
+        },
+        { new: true }
+      );
+    } else {
+      updatedCompany = await Company.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: { followers: userId },
+          $inc: { totalFollowers: 1 }
+        },
+        { new: true }
+      );
+    }
+
+    return res.status(200).json({
+      message: alreadyFollowing ? "Unfollowed company" : "Followed company",
+      totalFollowers: updatedCompany.totalFollowers,
+      success: true
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error", success: false });
+  }
+};
+
+export { registerCompany,toggleLikeCompany, toggleFollowCompany, getRegisterCompany,getAdminCompany, updateCompanyDetails, getSingleCompany, deleteCompany, getCompanyWithApplications}

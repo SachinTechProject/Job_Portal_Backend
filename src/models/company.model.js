@@ -23,10 +23,6 @@ const companySchema = new mongoose.Schema({
         required: true
     },
 
-    // logo: {
-    //     type: String
-    // },
-
     industry: {
         type: String
     },
@@ -54,12 +50,39 @@ const companySchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+
     applications: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Application"
         }
-    ]
+    ],
+
+    // 👍 Likes
+    likes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+
+    totalLikes: {
+        type: Number,
+        default: 0
+    },
+
+    // ⭐ Followers
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+
+    totalFollowers: {
+        type: Number,
+        default: 0
+    }
 
 }, { timestamps: true })
 
